@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Loop through all the defined databases, seperating by a ,
+for CURRENT_DATABASE in ${SOURCE_DATABASE//,/ }
+do
+    AWS_S3_DEST_FILE_PATH="${CURRENT_DATABASE}-$(date -u +'%Y-%m-%dT%H.%M.%SZ').gz"
+    export AWS_S3_DEST_FILE_PATH
+
+    echo "--------------------------------------------"
+    echo "Starting $CURRENT_DATABASE db backup..."
+
+    pg_dump --compress=9 $CURRENT_DATABASE | upload
+
+    echo "$PGDATABASE db backup succeeded"
+done
